@@ -1,10 +1,11 @@
 from flask import Blueprint
 from flask_restful import Api, reqparse, Resource, marshal
 from .model import User
-from blueprints import db, app
+from blueprints import db, app, admin_required
 from flask_orator import  jsonify
 import hashlib
 from helper.encryption import Encryption
+from flask_jwt_extended import get_jwt_claims, jwt_required
 
 bp_user = Blueprint('User', __name__)
 api = Api(bp_user)
@@ -13,6 +14,7 @@ class UserResource(Resource) :
     def __init__(self) :
         pass
 
+    @admin_required
     def get(self, id) :
         user = User.find(id)    
         app.logger.debug('DEBUG : %s', user)
@@ -67,11 +69,12 @@ class UserResourceList(Resource) :
     def __init__(self) :
         pass
 
+    @jwt_required
     def get(self) :
         users = User.all()
 
         app.logger.debug('DEBUG : %s', users)
-        
+
         return jsonify(users)
 
 

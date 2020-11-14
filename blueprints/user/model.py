@@ -18,5 +18,10 @@ class User(SoftDeletes, db.Model) :
         'deleted_at' : fields.DateTime
     }
 
+    jwt_claims_fields = {
+        'id' : fields.Integer,
+        'email' : fields.String,
+    }
+
     def __repr__(self) :
         return '<User %r>' % self.name

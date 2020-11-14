@@ -18,8 +18,8 @@ def admin_required(fn):
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         claims = get_jwt_claims()
-        if claims['user_type'] != "admin":
-            return {'user_type': 'FORBIDDEN', 'message': 'Admin only'}, 403
+        if claims != "admin":
+            return {'message': 'Unauthorize, Admin only'}, 401
         else:
             return fn(*args, **kwargs)
     return wrapper
@@ -70,6 +70,9 @@ def after_request(response):
                              'response': json.loads(response.data.decode('utf-8'))
                          }))
     return response
+
+from blueprints.auth import bp_auth
+app.register_blueprint(bp_auth, url_prefix='/auth')
 
 from blueprints.user.resources import bp_user
 app.register_blueprint(bp_user, url_prefix='/user')
