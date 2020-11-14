@@ -1,5 +1,5 @@
 from flask import Blueprint
-from flask_restful import Api, reqparse, Resource
+from flask_restful import Api, reqparse, Resource, marshal
 from .model import User
 from blueprints import db, app
 from flask_orator import  jsonify
@@ -16,7 +16,9 @@ class UserResource(Resource) :
     def get(self, id) :
         user = User.find(id)    
         app.logger.debug('DEBUG : %s', user)
-        return jsonify(user)
+
+        return marshal(user, User.response_fields), 200
+        # return jsonify(user)
 
     def post(self) :
         parser = reqparse.RequestParser()
@@ -37,13 +39,29 @@ class UserResource(Resource) :
             user.save()
 
             app.logger.debug('DEBUG : %s', user)
+            return marshal(user, User.response_fields), 200
 
-            return jsonify(user)
         except Exception as e :
             app.logger.debug('DEBUG : %s', 'EROR'+str(e))
-            result = {}
-            result['msg'] = str(e)
-            return jsonify(result)
+            return {'msg' : 'failed to save data'}, 500
+
+
+    def patch(self, id) :
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', location='json')
+        data = parser.parse_args()
+
+        user = User.find(id)
+        user.name = data['name']
+        user.save()
+
+        return marshal(user, User.response_fields), 200
+
+    def delete(self, id) :
+        
+        user = User.find(id)
+        user.delete()
+        return {'msg' : 'data successfuly deleted'}, 200
 
 class UserResourceList(Resource) :
     def __init__(self) :
@@ -53,7 +71,7 @@ class UserResourceList(Resource) :
         users = User.all()
 
         app.logger.debug('DEBUG : %s', users)
-
+        
         return jsonify(users)
 
 
