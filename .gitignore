@@ -199,8 +199,6 @@ pip-selfcheck.json
 *.log
 *.log.*
 
-/migrations/
-
 /.vscode/
 
 /__pycache__/
