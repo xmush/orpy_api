@@ -3,7 +3,7 @@ from flask_restful import fields
 
 
 class User(db.Model) :
-    __fillable__ = ['name', 'email', 'role']
+    __fillable__ = ['name', 'password', 'email', 'role']
 
     def __repr__(self) :
         return '<User %r>' % self.name

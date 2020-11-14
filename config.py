@@ -31,6 +31,8 @@ class Config() :
         }
     }
 
+    APP_KEY = cfg['app']['key']
+
 class DevelopmentConfig(Config) :
     APP_DEBUG =True
     DEBUG = True
